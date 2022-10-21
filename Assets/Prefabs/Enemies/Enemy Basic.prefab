@@ -671,8 +671,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startSpeed: 5
-  startHealth: 100
-  worth: 50
+  startHealth: 150
+  worth: 30
   healthBar: {fileID: 1853907207}
   healthUI: {fileID: 2039939812}
   deathSound: {fileID: 8250112399539846141}

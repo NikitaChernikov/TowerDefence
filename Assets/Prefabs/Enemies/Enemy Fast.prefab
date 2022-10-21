@@ -1114,12 +1114,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c984060d00523894392b3adf8029f6c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startSpeed: 10
-  startHealth: 50
-  worth: 25
-  deathSound: {fileID: 8709783350940356275}
+  startSpeed: 7
+  startHealth: 100
+  worth: 20
   healthBar: {fileID: 592000470648664823}
   healthUI: {fileID: 592000470264303892}
+  deathSound: {fileID: 8709783350940356275}
 --- !u!114 &3998999100753345548
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,7 +11,7 @@ public class MainMenu : MonoBehaviour
     }
     public void StartGame()
     {
-        AsyncLoading.asyncLoadingInstance.LoadLevel(PlayerPrefs.GetInt("LevelReached"));
+        AsyncLoading.asyncLoadingInstance.LoadLevel(PlayerPrefs.GetInt("LevelReached", 1));
     }
 
     public void ExitGame()

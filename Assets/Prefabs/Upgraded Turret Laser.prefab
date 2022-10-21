@@ -10452,15 +10452,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27ad07c099de50c4dbc3474945451d1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  range: 25
+  range: 15
   cannonballPrefab: {fileID: 0}
   fireRate: 1
   useLaser: 1
   lineRenderer: {fileID: 2450270673153328836}
   impactEffect: {fileID: 163171374449951154}
   impactLight: {fileID: 7343347344199022550}
-  damageOverTime: 40
-  slowRate: 0.8
+  damageOverTime: 20
+  slowRate: 0.4
   laserSound: {fileID: 5595568052943303432}
   enemyTag: Enemy
   partToRotate: {fileID: 1093621071107423275}

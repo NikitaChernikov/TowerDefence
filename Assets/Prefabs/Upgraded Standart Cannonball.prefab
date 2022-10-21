@@ -100,7 +100,7 @@ MonoBehaviour:
   speed: 20
   impactEffect: {fileID: 7076742826477128768, guid: c2241d953fb0b1c448838969c3a4aac4, type: 3}
   explosionRadius: 0
-  damage: 70
+  damage: 40
 --- !u!82 &2186286435166859646
 AudioSource:
   m_ObjectHideFlags: 0

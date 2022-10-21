@@ -613,11 +613,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startSpeed: 3
-  startHealth: 300
-  worth: 100
-  deathSound: {fileID: 8587922121669910941}
+  startHealth: 400
+  worth: 60
   healthBar: {fileID: 6114487118700401380}
   healthUI: {fileID: 6114487118380249351}
+  deathSound: {fileID: 8587922121669910941}
 --- !u!114 &2289591229863229095
 MonoBehaviour:
   m_ObjectHideFlags: 0
