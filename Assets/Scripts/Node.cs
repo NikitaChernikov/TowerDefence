@@ -1,39 +1,23 @@
 using UnityEngine;
+using System.Collections;
 
 public class Node : MonoBehaviour
 {
-    [SerializeField] private Color nodePressedColor;
+
+    //[SerializeField] private Color nodePressedColor;
     [SerializeField] private Vector3 positionOffset;
-    //[SerializeField] private Color notEnoughMoneyColor;
+    [SerializeField] private GameObject notEnoughGoldText;
 
     [System.NonSerialized] public GameObject turret;
     [System.NonSerialized] public TurretBlueprint turretBlueprint;
     [System.NonSerialized] public bool isUpgraded = false;
 
-    //private Renderer rend;
-    //private Color startColor;
-    //private GameObject flagOnNode;
     private BuildManager buildManager;
 
     private void Start()
     {
         buildManager = BuildManager.instance;
-        //flagOnNode = transform.GetChild(0).gameObject;
-        //rend = GetComponent<Renderer>();
-        //startColor = rend.material.color;
     }
-
-    //private void Update()
-    //{
-    //    if (buildManager.HasMoney)
-    //    {
-    //        rend.material.color = startColor;
-    //    }
-    //    else
-    //    {
-    //        rend.material.color = notEnoughMoneyColor;
-    //    }
-    //}
 
     public Vector3 GetBuildPosition()
     {
@@ -45,6 +29,8 @@ public class Node : MonoBehaviour
         if (PlayerStats.Money < blueprint.cost)
         {
             Debug.Log("Not enough gold");
+            StartCoroutine(NotEnoughGold());
+            Shop.selected = false;
             return;
         }
         PlayerStats.Money -= blueprint.cost;
@@ -54,6 +40,7 @@ public class Node : MonoBehaviour
         GameObject effect = Instantiate(buildManager.buildEffect, GetBuildPosition(), Quaternion.identity);
         Destroy(effect, 5);
         MoneyUI.moneyUIinstance.GetMoney();
+        Shop.selected = false;
     }
 
     public void UpgradeTurret()
@@ -61,6 +48,7 @@ public class Node : MonoBehaviour
         if (PlayerStats.Money < turretBlueprint.upgradeCost)
         {
             Debug.Log("Not enough gold to upgrade");
+            StartCoroutine(NotEnoughGold());
             return;
         }
         PlayerStats.Money -= turretBlueprint.upgradeCost;
@@ -98,6 +86,14 @@ public class Node : MonoBehaviour
             return;
 
         BuildTurret(buildManager.GetTurretBlueprint());
+        BuildManager.instance.DeselectTurret();
         //Destroy(flagOnNode);
+    }
+
+    private IEnumerator NotEnoughGold()
+    {
+        notEnoughGoldText.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        notEnoughGoldText.SetActive(false);
     }
 }

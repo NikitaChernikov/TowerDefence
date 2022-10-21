@@ -112,6 +112,7 @@ MonoBehaviour:
   impactLight: {fileID: 0}
   damageOverTime: 30
   slowRate: 0.5
+  laserSound: {fileID: 0}
   enemyTag: Enemy
   partToRotate: {fileID: 9144103703755781073}
   turnSpeed: 10

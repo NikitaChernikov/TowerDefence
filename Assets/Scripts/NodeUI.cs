@@ -11,6 +11,7 @@ public class NodeUI : MonoBehaviour
 
     public void SetTarget(Node _target)
     {
+        Shop.selected = false;
         target = _target;
         transform.position = target.GetBuildPosition();
         if (!target.isUpgraded)

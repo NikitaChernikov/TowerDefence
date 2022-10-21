@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class TurretBlueprint
@@ -7,6 +8,8 @@ public class TurretBlueprint
     public int cost;
     public GameObject upgradedPrefab;
     public int upgradeCost;
+    public Image image;
+    public Button button;
 
     public int GetSellCost()
     {
