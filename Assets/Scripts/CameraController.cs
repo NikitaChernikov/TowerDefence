@@ -33,6 +33,11 @@ public class CameraController : MonoBehaviour
             Delta1 = PlanePositionDelta(Input.GetTouch(0));
             if (Input.GetTouch(0).phase == TouchPhase.Moved)
             {
+                if (Camera.transform.position.z >= 57)
+                {
+                    Camera.transform.position = new Vector3(Camera.transform.position.x, 
+                        Camera.transform.position.y, 56);
+                }
                 Camera.transform.Translate(Delta1, Space.World);
             }
         }
