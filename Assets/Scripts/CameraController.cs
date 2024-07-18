@@ -2,14 +2,21 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private Camera Camera;
-    [SerializeField] private bool Rotate;
-    private Plane Plane;
+    [SerializeField] private Camera _camera;
+    [SerializeField] private bool _rotate;
+
+    [Header("Borders")]
+    [SerializeField] private float _minZoom = 10f; // Минимальный зум
+    [SerializeField] private float _maxZoom = 50f; // Максимальный зум
+    [SerializeField] private Vector3 _minPosition; // Минимальная позиция камеры
+    [SerializeField] private Vector3 _maxPosition; // Максимальная позиция камеры
+
+    private Plane _plane;
 
     private void Awake()
     {
-        if (Camera == null)
-            Camera = Camera.main;
+        if (_camera == null)
+            _camera = Camera.main;
     }
 
     private void Update()
@@ -20,29 +27,24 @@ public class CameraController : MonoBehaviour
             return;
         }
 
-        //Update Plane
+        // Update Plane
         if (Input.touchCount >= 1)
-            Plane.SetNormalAndPosition(transform.up, transform.position);
+            _plane.SetNormalAndPosition(transform.up, transform.position);
 
-        var Delta1 = Vector3.zero;
-        var Delta2 = Vector3.zero;
+        var delta1 = Vector3.zero;
 
-        //Scroll
+        // Scroll
         if (Input.touchCount >= 1)
         {
-            Delta1 = PlanePositionDelta(Input.GetTouch(0));
+            delta1 = PlanePositionDelta(Input.GetTouch(0));
             if (Input.GetTouch(0).phase == TouchPhase.Moved)
             {
-                if (Camera.transform.position.z >= 57)
-                {
-                    Camera.transform.position = new Vector3(Camera.transform.position.x, 
-                        Camera.transform.position.y, 56);
-                }
-                Camera.transform.Translate(Delta1, Space.World);
+                _camera.transform.Translate(delta1, Space.World);
+                _camera.transform.position = ClampCameraPosition(_camera.transform.position);
             }
         }
 
-        //Pinch
+        // Pinch
         if (Input.touchCount >= 2)
         {
             var pos1 = PlanePosition(Input.GetTouch(0).position);
@@ -50,47 +52,65 @@ public class CameraController : MonoBehaviour
             var pos1b = PlanePosition(Input.GetTouch(0).position - Input.GetTouch(0).deltaPosition);
             var pos2b = PlanePosition(Input.GetTouch(1).position - Input.GetTouch(1).deltaPosition);
 
-            //calc zoom
-            var zoom = Vector3.Distance(pos1, pos2) /
-                       Vector3.Distance(pos1b, pos2b);
+            // Calculate zoom
+            var zoom = Vector3.Distance(pos1, pos2) / Vector3.Distance(pos1b, pos2b);
 
-            //edge case
+            // Edge case
             if (zoom == 0 || zoom > 10)
                 return;
 
-            //Move cam amount the mid ray
-            Camera.transform.position = Vector3.LerpUnclamped(pos1, Camera.transform.position, 1 / zoom);
+            // Move camera along the mid ray
+            _camera.transform.position = Vector3.LerpUnclamped(pos1, _camera.transform.position, 1 / zoom);
+            _camera.transform.position = ClampCameraPosition(_camera.transform.position);
 
-            if (Rotate && pos2b != pos2)
-                Camera.transform.RotateAround(pos1, Plane.normal, Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal));
+            // Limit zoom
+            float currentZoom = Vector3.Distance(_camera.transform.position, transform.position); // изменение для корректного расчета
+            if (currentZoom < _minZoom)
+            {
+                _camera.transform.position = pos1 + (_camera.transform.position - pos1).normalized * _minZoom;
+            }
+            else if (currentZoom > _maxZoom)
+            {
+                _camera.transform.position = pos1 + (_camera.transform.position - pos1).normalized * _maxZoom;
+            }
+
+            if (_rotate && pos2b != pos2)
+                _camera.transform.RotateAround(pos1, _plane.normal, Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, _plane.normal));
         }
-
     }
 
     private Vector3 PlanePositionDelta(Touch touch)
     {
-        //not moved
+        // Not moved
         if (touch.phase != TouchPhase.Moved)
             return Vector3.zero;
 
-        //delta
-        var rayBefore = Camera.ScreenPointToRay(touch.position - touch.deltaPosition);
-        var rayNow = Camera.ScreenPointToRay(touch.position);
-        if (Plane.Raycast(rayBefore, out var enterBefore) && Plane.Raycast(rayNow, out var enterNow))
+        // Delta
+        var rayBefore = _camera.ScreenPointToRay(touch.position - touch.deltaPosition);
+        var rayNow = _camera.ScreenPointToRay(touch.position);
+        if (_plane.Raycast(rayBefore, out var enterBefore) && _plane.Raycast(rayNow, out var enterNow))
             return rayBefore.GetPoint(enterBefore) - rayNow.GetPoint(enterNow);
 
-        //not on plane
+        // Not on plane
         return Vector3.zero;
     }
 
     private Vector3 PlanePosition(Vector2 screenPos)
     {
-        //position
-        var rayNow = Camera.ScreenPointToRay(screenPos);
-        if (Plane.Raycast(rayNow, out var enterNow))
+        // Position
+        var rayNow = _camera.ScreenPointToRay(screenPos);
+        if (_plane.Raycast(rayNow, out var enterNow))
             return rayNow.GetPoint(enterNow);
 
         return Vector3.zero;
+    }
+
+    private Vector3 ClampCameraPosition(Vector3 position)
+    {
+        float clampedX = Mathf.Clamp(position.x, _minPosition.x, _maxPosition.x);
+        float clampedY = Mathf.Clamp(position.y, _minPosition.y, _maxPosition.y);
+        float clampedZ = Mathf.Clamp(position.z, _minPosition.z, _maxPosition.z);
+        return new Vector3(clampedX, clampedY, clampedZ);
     }
 
     private void OnDrawGizmos()
